@@ -27,7 +27,7 @@ class _PhotoPageState extends State<PhotoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("History"),
+        title: const Text("Photo"),
       ),
       body: Container(
         alignment: Alignment.center,

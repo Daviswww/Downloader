@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class DownloaderRepositoryImpl extends DownloaderRepository {
   int _downloaded = 0;
   String _filename = '';
   String _url = '';
+  bool isPause = false;
 
   DownloaderRepositoryImpl({
     required FileRepository fileRepository,
@@ -61,6 +63,7 @@ class DownloaderRepositoryImpl extends DownloaderRepository {
           _downloaded += value.length;
 
           _streamController.add(_downloaded / _contentLength);
+          sleep(const Duration(milliseconds: 200));
         }, onDone: () async {
           await _hiveRepository.save(url);
           debugPrint("Done!");
@@ -76,6 +79,12 @@ class DownloaderRepositoryImpl extends DownloaderRepository {
   Future<Either<DownloaderFailure, Unit>> resume() async {
     try {
       httpClient = http.Client();
+      if (_contentLength == 0) {
+        return left(const DownloaderResumeFailure(message: "No data"));
+      }
+      if (!isPause) {
+        return left(const DownloaderResumeFailure(message: "No pause"));
+      }
       final request = http.Request(
         'GET',
         Uri.parse(_url),
@@ -98,6 +107,7 @@ class DownloaderRepositoryImpl extends DownloaderRepository {
           _downloaded += value.length;
 
           _streamController.add(_downloaded / _contentLength);
+          sleep(const Duration(milliseconds: 200));
         }, onDone: () async {
           await _hiveRepository.save(_url);
           debugPrint("Done!");
@@ -112,6 +122,7 @@ class DownloaderRepositoryImpl extends DownloaderRepository {
   @override
   Future<Either<DownloaderFailure, Unit>> pause() async {
     try {
+      isPause = true;
       streamedResponse.cancel();
       httpClient.close();
       return right(unit);

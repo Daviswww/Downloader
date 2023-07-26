@@ -9,41 +9,75 @@ import 'package:myapp/presentation/screens/home/components/item_progress.dart';
 import 'package:myapp/presentation/screens/home/components/item_text_field.dart';
 
 class HeaderItem extends StatefulWidget {
-  const HeaderItem({super.key, required this.initUrl});
+  const HeaderItem({
+    super.key,
+    required this.initUrl,
+  });
   final String initUrl;
+
   @override
   State<HeaderItem> createState() => _HeaderItemState();
 }
 
-class _HeaderItemState extends State<HeaderItem> {
+class _HeaderItemState extends State<HeaderItem> with WidgetsBindingObserver {
   late DownloaderRepository downloaderRepository;
   late TextEditingController textEditingController;
+  late AppLifecycleState appLifecycleState;
   late StreamController<double> streamController;
+
   late bool isStart;
+  late bool isPause;
   late double progressValue;
 
   @override
   void initState() {
     isStart = false;
+    isPause = false;
     progressValue = 0;
     textEditingController = TextEditingController(text: widget.initUrl);
     streamController = StreamController<double>();
+
     downloaderRepository = DownloaderRepositoryImpl(
       fileRepository: FileRepositoryImpl(),
       hiveRepository: HiveRepositoryImpl(),
       streamController: streamController,
     );
+
     streamController.stream.listen((event) {
       setState(() {
         progressValue = event == 1 ? 0 : event;
         isStart = event == 1 ? false : true;
       });
     });
+
+    WidgetsBinding.instance.addObserver(this);
+    appLifecycleState = AppLifecycleState.inactive;
+    super.didChangeAppLifecycleState(appLifecycleState);
+
     super.initState();
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (isStart) {
+      switch (state) {
+        case AppLifecycleState.paused:
+          downloaderRepository.pause();
+          break;
+        case AppLifecycleState.resumed:
+          downloaderRepository.resume();
+          break;
+        default:
+      }
+    }
+    debugPrint("$state");
+    appLifecycleState = state;
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     textEditingController.dispose();
     streamController.close();
     super.dispose();

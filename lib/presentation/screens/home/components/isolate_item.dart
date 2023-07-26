@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:isolate';
 
 import 'package:flutter/material.dart';
@@ -11,7 +12,10 @@ import 'package:myapp/presentation/screens/home/components/item_progress.dart';
 import 'package:myapp/presentation/screens/home/components/item_text_field.dart';
 
 class IsolateItem extends StatefulWidget {
-  const IsolateItem({super.key, required this.initUrl});
+  const IsolateItem({
+    super.key,
+    required this.initUrl,
+  });
   final String initUrl;
   @override
   State<IsolateItem> createState() => _IsolateItemState();
@@ -44,6 +48,7 @@ class _IsolateItemState extends State<IsolateItem> {
         isStart = message == 100 ? false : true;
       });
     });
+
     super.initState();
   }
 
