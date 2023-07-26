@@ -71,7 +71,6 @@ class _HeaderItemState extends State<HeaderItem> with WidgetsBindingObserver {
         default:
       }
     }
-    debugPrint("$state");
     appLifecycleState = state;
   }
 
