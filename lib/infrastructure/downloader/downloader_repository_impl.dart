@@ -123,7 +123,7 @@ class DownloaderRepositoryImpl extends DownloaderRepository {
   Future<Either<DownloaderFailure, Unit>> pause() async {
     try {
       isPause = true;
-      streamedResponse.cancel();
+      await streamedResponse.cancel();
       httpClient.close();
       return right(unit);
     } catch (e) {
@@ -136,7 +136,7 @@ class DownloaderRepositoryImpl extends DownloaderRepository {
     try {
       _contentLength = 0;
       _downloaded = 0;
-      streamedResponse.cancel();
+      await streamedResponse.cancel();
       httpClient.close();
       return right(unit);
     } catch (e) {

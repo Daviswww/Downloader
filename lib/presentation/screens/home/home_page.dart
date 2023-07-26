@@ -4,7 +4,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/presentation/screens/home/components/header_item.dart';
 import 'package:myapp/presentation/screens/home/components/isolate_item.dart';
-import 'package:myapp/presentation/screens/home/components/item.dart';
 import 'package:myapp/share/app_value.dart';
 
 @RoutePage()
