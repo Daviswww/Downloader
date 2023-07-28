@@ -121,6 +121,9 @@ class _HeaderItemState extends State<HeaderItem> with WidgetsBindingObserver {
                     ),
                     IconButton(
                       onPressed: () {
+                        setState(() {
+                          isStart = !isStart;
+                        });
                         downloaderRepository.cancel();
                       },
                       icon: const Icon(Icons.close_rounded),

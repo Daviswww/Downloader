@@ -36,15 +36,15 @@ class HiveRepositoryImpl implements HiveRepository {
   }
 
   @override
-  Future<Either<HiveFailure, Unit>> delete(ImageModel image) async {
+  Future<Either<HiveFailure, Unit>> delete(String filename) async {
     try {
-      box.delete(image.filename).catchError(
+      box.delete(filename).catchError(
         (e) {
           debugPrint("$e");
         },
       );
       final dir = await getApplicationDocumentsDirectory();
-      final file = File("${dir.path}/${image.filename}");
+      final file = File("${dir.path}/$filename");
       await file.delete();
       return right(unit);
     } catch (e) {

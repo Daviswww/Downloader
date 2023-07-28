@@ -32,7 +32,7 @@ class _ImageDeleteButtonState extends State<ImageDeleteButton> {
     return TextButton(
       onPressed: () {
         AutoRouter.of(context).pop();
-        hiveRepository.delete(image);
+        hiveRepository.delete(image.filename);
       },
       child: const Text("Delete"),
     );

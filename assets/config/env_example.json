@@ -1,0 +1,17 @@
+{
+    "development": {
+        "host": "http://10.0.2.2:3000",
+        "debug": true,
+        "testing": false
+    },
+    "testing": {
+        "host": "http://10.0.2.2:3000",
+        "debug": false,
+        "testing": true
+    },
+    "production": {
+        "host": "http://10.0.2.2:3000",
+        "debug": false,
+        "testing": false
+    }
+}

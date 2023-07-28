@@ -52,17 +52,18 @@ class DownloaderRepositoryImpl extends DownloaderRepository {
       httpClient.send(request).asStream().listen((http.StreamedResponse r) {
         _contentLength = r.contentLength!;
         streamedResponse = r.stream.listen((value) async {
-          final WriteBytesInputModel writeBytesInputModel =
-              WriteBytesInputModel(
-            filename: _filename,
-            offset: _downloaded,
-            contentLength: _contentLength,
-            chunks: value,
+          final file = await _fileRepository.writeAsBytes(
+            WriteBytesInputModel(
+              filename: _filename,
+              offset: _downloaded,
+              contentLength: _contentLength,
+              chunks: value,
+            ),
           );
-          await _fileRepository.writeAsBytes(writeBytesInputModel);
-          _downloaded += value.length;
-
-          _streamController.add(_downloaded / _contentLength);
+          if (file.isRight()) {
+            _downloaded += value.length;
+            _streamController.add(_downloaded / _contentLength);
+          }
           sleep(const Duration(milliseconds: 200));
         }, onDone: () async {
           await _hiveRepository.save(url);
@@ -96,17 +97,19 @@ class DownloaderRepositoryImpl extends DownloaderRepository {
 
       httpClient.send(request).asStream().listen((http.StreamedResponse r) {
         streamedResponse = r.stream.listen((value) async {
-          final WriteBytesInputModel writeBytesInputModel =
-              WriteBytesInputModel(
-            filename: _filename,
-            offset: _downloaded,
-            contentLength: _contentLength,
-            chunks: value,
+          final file = await _fileRepository.writeAsBytes(
+            WriteBytesInputModel(
+              filename: _filename,
+              offset: _downloaded,
+              contentLength: _contentLength,
+              chunks: value,
+            ),
           );
-          await _fileRepository.writeAsBytes(writeBytesInputModel);
-          _downloaded += value.length;
-
-          _streamController.add(_downloaded / _contentLength);
+          if (file.isRight()) {
+            _downloaded += value.length;
+            _streamController.add(_downloaded / _contentLength);
+            isPause = false;
+          }
           sleep(const Duration(milliseconds: 200));
         }, onDone: () async {
           await _hiveRepository.save(_url);
@@ -138,6 +141,17 @@ class DownloaderRepositoryImpl extends DownloaderRepository {
       _downloaded = 0;
       await streamedResponse.cancel();
       httpClient.close();
+
+      final hive = await _hiveRepository.delete(_filename);
+      if (hive.isLeft()) {
+        return left(
+            const DownloaderCancelFailure(message: "Delete local db failure."));
+      }
+      final file = await _fileRepository.delete(_filename);
+      if (file.isRight()) {
+        return left(
+            const DownloaderCancelFailure(message: "Delete file failure."));
+      }
       return right(unit);
     } catch (e) {
       return left(DownloaderCancelFailure(message: "$e"));
