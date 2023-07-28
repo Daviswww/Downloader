@@ -148,7 +148,7 @@ class DownloaderRepositoryImpl extends DownloaderRepository {
             const DownloaderCancelFailure(message: "Delete local db failure."));
       }
       final file = await _fileRepository.delete(_filename);
-      if (file.isRight()) {
+      if (file.isLeft()) {
         return left(
             const DownloaderCancelFailure(message: "Delete file failure."));
       }

@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
       body: const Column(
         children: [
           HeaderItem(initUrl: AppValue.url),
-          IsolateItem(initUrl: AppValue.url),
+          // IsolateItem(initUrl: AppValue.url),
           // Item(),
         ],
       ),
