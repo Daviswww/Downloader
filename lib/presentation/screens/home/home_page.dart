@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/presentation/screens/home/components/header_item.dart';
-import 'package:myapp/presentation/screens/home/components/isolate_item.dart';
 import 'package:myapp/share/app_value.dart';
 
 @RoutePage()
@@ -38,9 +37,10 @@ class _HomePageState extends State<HomePage> {
         shadowColor: Colors.transparent,
         backgroundColor: Colors.transparent,
       ),
-      body: const Column(
+      body: Column(
         children: [
-          HeaderItem(initUrl: AppValue.url),
+          HeaderItem(initUrl: AppValue.urlList[0].url),
+          HeaderItem(initUrl: AppValue.urlList[1].url),
           // IsolateItem(initUrl: AppValue.url),
           // Item(),
         ],
