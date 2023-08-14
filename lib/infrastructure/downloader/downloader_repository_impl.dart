@@ -64,6 +64,7 @@ class DownloaderRepositoryImpl extends DownloaderRepository {
             _downloaded += value.length;
             _streamController.add(_downloaded / _contentLength);
           }
+
           sleep(const Duration(milliseconds: 200));
         }, onDone: () async {
           await _hiveRepository.save(url);
